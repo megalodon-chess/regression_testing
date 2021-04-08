@@ -36,6 +36,7 @@ def main():
         date = datetime.now().strftime("%m-%d-%Y %P-%M-%S %p")
         print(f"Starting regression test at time {date}.")
 
+        # Build
         print("Building latest Megalodon...")
         if not os.path.isdir(REPO_PATH):
             os.system(f"git clone https://github.com/megalodon-chess/megalodon.git {REPO_PATH}")
@@ -43,6 +44,10 @@ def main():
         os.system("git pull")
         os.system("./build.sh")
         shutil.copy(os.path.join(REPO_PATH, "build", "Megalodon"), TEST_PATH)
+
+        # Test
+        games, result = play_games(BASE_PATH, TEST_PATH)
+        elo = 400 * result / games
 
         time.sleep(INC)
 
