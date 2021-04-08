@@ -30,9 +30,10 @@ TIME_CONTROL = (90, 0)
 
 def test(base_path, new_path):
     score = 0
+    games = 0
 
-    for game in range(NUM_GAMES):
-        sys.stdout.write(f"Game {game+1}: ")
+    while games < NUM_GAMES:
+        sys.stdout.write(f"Game {games+1}: ")
         sys.stdout.flush()
 
         board = chess.Board()
@@ -46,8 +47,8 @@ def test(base_path, new_path):
         for i in range(RAND_MOVES):
             board.push(random.choice(list(board.generate_legal_moves())))
 
-        wtime = TIME_CONTROL[0] * 60
-        btime = TIME_CONTROL[0] * 60
+        wtime = TIME_CONTROL[0]
+        btime = TIME_CONTROL[0]
         inc = TIME_CONTROL[1]
         while True:
             try:
@@ -81,5 +82,8 @@ def test(base_path, new_path):
                 score += 1
             elif result == "0-1":
                 score -= 1
+        games += 1
+        white.quit()
+        black.quit()
 
-    return score
+    return (games, score)
