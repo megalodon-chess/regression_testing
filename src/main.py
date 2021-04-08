@@ -18,6 +18,33 @@
 #
 
 import os
+import shutil
 import time
-from elo import test as elo_test
+from datetime import datetime
+from elo import test as play_games
 from image import image as create_image
+
+PARENT = os.path.dirname(os.path.realpath(__file__))
+BASE_PATH = os.path.join(PARENT, "Megalodon_base")
+TEST_PATH = os.path.join(PARENT, "Megalodon_build")
+REPO_PATH = os.path.join(PARENT, "megalodon")
+INC = 8 * 3600  # Seconds
+
+
+def main():
+    while True:
+        date = datetime.now().strftime("%m-%d-%Y %P-%M-%S %p")
+        print(f"Starting regression test at time {date}.")
+
+        print("Building latest Megalodon...")
+        if not os.path.isdir(REPO_PATH):
+            os.system(f"git clone https://github.com/megalodon-chess/megalodon.git {REPO_PATH}")
+        os.chdir(REPO_PATH)
+        os.system("git pull")
+        os.system("./build.sh")
+        shutil.copy(os.path.join(REPO_PATH, "build", "Megalodon"), TEST_PATH)
+
+        time.sleep(INC)
+
+
+main()
