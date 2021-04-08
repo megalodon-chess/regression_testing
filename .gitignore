@@ -2,3 +2,6 @@ __pycache__
 .vscode
 
 /src/data
+/src/megalodon
+/src/Megalodon_base
+/src/Megalodon_build
