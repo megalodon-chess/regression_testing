@@ -26,14 +26,18 @@ from elo import test as play_games
 from image import image as create_image
 
 PARENT = os.path.dirname(os.path.realpath(__file__))
+HTTP_PATH = os.path.join(PARENT, "http")
 BASE_PATH = os.path.join(PARENT, "Megalodon_base")
 TEST_PATH = os.path.join(PARENT, "Megalodon_build")
 REPO_PATH = os.path.join(PARENT, "megalodon")
-RESULTS_PATH = os.path.join(PARENT, "results.json")
+RESULTS_PATH = os.path.join(PARENT, HTTP_PATH, "results.json")
+IMAGE_PATH = os.path.join(PARENT, HTTP_PATH, "results.jpg")
 INC = 86400  # Seconds
 
 
 def main():
+    os.makedirs(HTTP_PATH, exist_ok=True)
+
     while True:
         date = datetime.now()
         date_str = date.strftime("%m-%d-%Y %P-%M-%S %p")
