@@ -17,6 +17,7 @@
 #  along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+import sys
 import os
 import shutil
 import time
@@ -30,8 +31,8 @@ HTTP_PATH = os.path.join(PARENT, "http")
 BASE_PATH = os.path.join(PARENT, "Megalodon_base")
 TEST_PATH = os.path.join(PARENT, "Megalodon_build")
 REPO_PATH = os.path.join(PARENT, "megalodon")
-RESULTS_PATH = os.path.join(PARENT, HTTP_PATH, "results.json")
-IMAGE_PATH = os.path.join(PARENT, HTTP_PATH, "results.jpg")
+RESULTS_PATH = os.path.join(HTTP_PATH, "results.json")
+IMAGE_PATH = os.path.join(HTTP_PATH, "results.jpg")
 INC = 86400  # Seconds
 
 
@@ -53,6 +54,7 @@ def main():
         shutil.copy(os.path.join(REPO_PATH, "build", "Megalodon"), TEST_PATH)
 
         # Test
+        print("Playing games...")
         games, result = play_games(BASE_PATH, TEST_PATH)
         elo = 400 * result / games
         if not os.path.isfile(RESULTS_PATH):
@@ -60,12 +62,19 @@ def main():
                 json.dump([], file)
         with open(RESULTS_PATH, "r") as file:
             results = json.load(file)
-        results.append([time.time(), elo, [date.year, date.month, date.day]])
+        results.append([elo, time.time(), [date.year, date.month, date.day]])
         with open(RESULTS_PATH, "w") as file:
             json.dump(results, file)
 
         # Generate graph
+        print("Generating graph...")
+        with open(RESULTS_PATH, "r") as file:
+            results = json.load(file)
+        if len(results) >= 2:
+            create_image(results, IMAGE_PATH)
 
+        print("--------------------------------------")
+        sys.stdout.flush()
         time.sleep(INC)
 
 
