@@ -20,6 +20,7 @@
 import os
 import shutil
 import time
+import json
 from datetime import datetime
 from elo import test as play_games
 from image import image as create_image
@@ -28,13 +29,15 @@ PARENT = os.path.dirname(os.path.realpath(__file__))
 BASE_PATH = os.path.join(PARENT, "Megalodon_base")
 TEST_PATH = os.path.join(PARENT, "Megalodon_build")
 REPO_PATH = os.path.join(PARENT, "megalodon")
-INC = 8 * 3600  # Seconds
+RESULTS_PATH = os.path.join(PARENT, "results.json")
+INC = 86400  # Seconds
 
 
 def main():
     while True:
-        date = datetime.now().strftime("%m-%d-%Y %P-%M-%S %p")
-        print(f"Starting regression test at time {date}.")
+        date = datetime.now()
+        date_str = date.strftime("%m-%d-%Y %P-%M-%S %p")
+        print(f"Starting regression test at time {date_str}.")
 
         # Build
         print("Building latest Megalodon...")
@@ -48,6 +51,16 @@ def main():
         # Test
         games, result = play_games(BASE_PATH, TEST_PATH)
         elo = 400 * result / games
+        if not os.path.isfile(RESULTS_PATH):
+            with open(RESULTS_PATH, "w") as file:
+                json.dump([], file)
+        with open(RESULTS_PATH, "r") as file:
+            results = json.load(file)
+        results.append([time.time(), elo, [date.year, date.month, date.day]])
+        with open(RESULTS_PATH, "w") as file:
+            json.dump(results, file)
+
+        # Generate graph
 
         time.sleep(INC)
 
